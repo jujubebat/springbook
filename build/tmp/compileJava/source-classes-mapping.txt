@@ -2,3 +2,9 @@ springbook/user/domain/User.java
  springbook.user.domain.User
 springbook/user/dao/UserDao.java
  springbook.user.dao.UserDao
+springbook/user/dao/NUserDao.java
+ springbook.user.dao.NUserDao
+springbook/user/dao/DUserDao.java
+ springbook.user.dao.DUserDao
+springbook/user/dao/SimpleConnectionMaker.java
+ springbook.user.dao.SimpleConnectionMaker
