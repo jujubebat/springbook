@@ -9,8 +9,7 @@ public class DConnectionMaker implements ConnectionMaker {
     // D 사의 독자적인 방법으로 Connection을 생성하는 코드
     public Connection makeConnection() throws ClassNotFoundException, SQLException {
         Class.forName("com.mysql.jdbc.Driver");
-        Connection c = DriverManager.getConnection("jdbc:mysql://localhost/springbook", "spring", "book");
-        return c;
+        return DriverManager.getConnection("jdbc:mysql://localhost/springbook", "spring", "book");
     }
 
 }

@@ -14,6 +14,7 @@ dependencies {
     testRuntimeOnly 'org.junit.jupiter:junit-jupiter-engine'
 
     implementation group: 'mysql', name: 'mysql-connector-java', version: '5.1.49'
+    implementation group: 'org.springframework', name: 'spring-context', version: '5.3.7'
 }
 
 test {
