@@ -8,7 +8,7 @@ import javax.sql.DataSource;
 import org.springframework.dao.EmptyResultDataAccessException;
 import springbook.user.domain.User;
 
-public abstract class UserDao {
+public class UserDao {
 
     private DataSource dataSource;
 
@@ -60,19 +60,20 @@ public abstract class UserDao {
         Connection c = null;
         PreparedStatement ps = null;
 
-        try { // 예외가 발생할 가능성이 있는 코드를 모 두 try 블록으로 묶어준다.
+        try {
             c = dataSource.getConnection();
-            ps = makeStatement(c); // 변하는 부분을 메소드로 추출하고 변하지 않는 부 분에서 호출하도록 만들었다.
+
+            StatementStrategy strategy = new DeleteAllStatement();
+            ps = strategy.makePreparedStatement(c);
+
             ps.executeUpdate();
-        } catch (SQLException e) { // 예외가 발생했을 떄 부가적인 작업을 해줄 수 있도록 catch 블록을 둔다.
+        } catch (SQLException e) {
             throw e;
-        } finally { // finally 이므로 try 블록에서 예외가 발생했을 때나 안 했을 때나 모두 실행된다.
+        } finally {
             if (ps != null) {
                 try {
                     ps.close();
                 } catch (SQLException e) {
-                    // ps.close() 메서드에서도 SQLException이 발생할 수 있기 때문에 이를 잡아줘야한다.
-                    // 그렇지 않으면 아래의 Connection 객체를 close() 하지 못하고 메서드를 빠져나갈 수 있다.
                 }
             }
 
@@ -84,8 +85,6 @@ public abstract class UserDao {
             }
         }
     }
-
-    abstract protected PreparedStatement makeStatement(Connection c) throws SQLException;
 
     public int getCount() throws SQLException {
         Connection c = null;
