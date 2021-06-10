@@ -6,14 +6,40 @@ import java.io.IOException;
 
 public class Calculator {
 
+    // 덧셈 계산 콜백
+    public Integer calcSum(String filepath) throws IOException {
+        LineCallback sumCallback =
+            new LineCallback() {
+                public Integer doSomethingWithLine(String line, Integer value) {
+                    return value + Integer.valueOf(line);
+                }
+            };
+        return lineReadTemplate(filepath, sumCallback, 0);
+    }
+
+    // 곱셈 계산 콜백
+    public Integer calcMultiply(String filepath) throws IOException {
+        LineCallback multiplyCallback =
+            new LineCallback() {
+                public Integer doSomethingWithLine(String line, Integer value) {
+                    return value * Integer.valueOf(line);
+                }
+            };
+        return lineReadTemplate(filepath, multiplyCallback, 1);
+    }
+
     // 템플릿
-    public Integer fileReadTemplate(String filepath, BufferedReaderCallback callback)
+    private Integer lineReadTemplate(String filepath, LineCallback callback, int initVal)
         throws IOException {
         BufferedReader br = null;
         try {
             br = new BufferedReader(new FileReader(filepath));
-            int ret = callback.doSomethingWithReader(br);
-            return ret;
+            Integer res = initVal;
+            String line = null;
+            while ((line = br.readLine()) != null) {
+                res = callback.doSomethingWithLine(line, res);
+            }
+            return res;
         } catch (IOException e) {
             System.out.println(e.getMessage());
             throw e;
@@ -29,37 +55,4 @@ public class Calculator {
         }
     }
 
-    // 곱셈 계산 콜백
-    public Integer calcMultiply(String filepath) throws IOException {
-        BufferedReaderCallback multiplyCallback =
-            new BufferedReaderCallback() {
-                public Integer doSomethingWithReader(BufferedReader br) throws IOException {
-                    Integer multiply = 1;
-                    String line = null;
-                    while ((line = br.readLine()) != null) {
-                        multiply *= Integer.valueOf(line);
-                    }
-                    return multiply;
-                }
-            };
-
-        return fileReadTemplate(filepath, multiplyCallback);
-    }
-
-    // 덧셈 계산 콜백
-    public Integer calcSum(String filepath) throws IOException {
-        BufferedReaderCallback sumCallback = new BufferedReaderCallback() {
-            @Override
-            public Integer doSomethingWithReader(BufferedReader br) throws IOException {
-                Integer sum = 0;
-                String line = null;
-                while ((line = br.readLine()) != null) {
-                    sum += Integer.valueOf(line);
-                }
-                return sum;
-            }
-        };
-
-        return fileReadTemplate(filepath, sumCallback);
-    }
 }
