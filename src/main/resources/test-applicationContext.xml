@@ -6,14 +6,15 @@ http://www.springframework.org/schema/beans/spring-beans-3.0.xsd">
   <bean id="userService" class="springbook.user.service.UserService">
     <property name="userDao" ref="userDao"/>
     <property name="transactionManager" ref="transactionManager"/>
+    <property name="mailSender" ref="mailSender"/>
+  </bean>
+
+  <bean id="userDao" class="springbook.user.dao.UserDaoJdbc">
+    <property name="dataSource" ref="dataSource"/>
   </bean>
 
   <bean id="transactionManager"
     class="org.springframework.jdbc.datasource.DataSourceTransactionManager">
-    <property name="dataSource" ref="dataSource"/>
-  </bean>
-
-  <bean id="userDao" class="springbook.user.dao.UserDaoJdbc">
     <property name="dataSource" ref="dataSource"/>
   </bean>
 
@@ -23,5 +24,7 @@ http://www.springframework.org/schema/beans/spring-beans-3.0.xsd">
     <property name="username" value="spring"/>
     <property name="password" value="book"/>
   </bean>
+
+  <bean id="mailSender" class="springbook.user.service.DummyMailSender" />
 
 </beans>
