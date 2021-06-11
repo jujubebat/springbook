@@ -1,8 +1,6 @@
 package springbook.user.service;
 
 import java.util.List;
-import javax.sql.DataSource;
-import org.springframework.jdbc.datasource.DataSourceTransactionManager;
 import org.springframework.transaction.PlatformTransactionManager;
 import org.springframework.transaction.TransactionStatus;
 import org.springframework.transaction.support.DefaultTransactionDefinition;
@@ -14,23 +12,20 @@ public class UserService {
 
     public static final int MIN_LOGCOUNT_FOR_SILVER = 50;
     public static final int MIN_RECCOMEND_FOR_GOLD = 30;
+    private PlatformTransactionManager transactionManager;
 
     private UserDao userDao;
-    private DataSource dataSource;
 
     public void setUserDao(UserDao userDao) {
         this.userDao = userDao;
     }
 
-    public void setDataSource(DataSource dataSource) {
-        this.dataSource = dataSource;
+    public void setTransactionManager(PlatformTransactionManager transactionManager) {
+        this.transactionManager = transactionManager;
     }
 
     public void upgradeLevels() {
-        // JDBC 트랜잭션 추상 오브젝트 생성
-        PlatformTransactionManager transactionManager = new DataSourceTransactionManager(dataSource);
-        // 트랜잭션 시작
-        TransactionStatus status = transactionManager.getTransaction(new DefaultTransactionDefinition());
+        TransactionStatus status = this.transactionManager.getTransaction(new DefaultTransactionDefinition());
         try {
             List<User> users = userDao.getAll();
             for (User user : users) {
@@ -38,9 +33,9 @@ public class UserService {
                     upgradeLevel(user);
                 }
             }
-            transactionManager.commit(status); // 트랜잭션 커밋
+            this.transactionManager.commit(status); // 트랜잭션 커밋
         } catch (RuntimeException e) {
-            transactionManager.rollback(status); // 트랜잭션 롤백
+            this.transactionManager.rollback(status); // 트랜잭션 롤백
             throw e;
         }
     }
